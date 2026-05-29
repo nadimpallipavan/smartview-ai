@@ -1,0 +1,39 @@
+<% content_for :title, "Sign In" %>
+
+<h2 class="text-2xl font-bold text-white mb-2">Welcome back</h2>
+<p class="text-sv-text-muted text-sm mb-6">Sign in to continue watching</p>
+
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-4" }) do |f| %>
+  <div>
+    <%= f.label :email, "Email address", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+    <%= f.email_field :email, autofocus: true, autocomplete: "email",
+        class: "sv-input",
+        placeholder: "you@example.com" %>
+  </div>
+
+  <div>
+    <%= f.label :password, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+    <%= f.password_field :password, autocomplete: "current-password",
+        class: "sv-input",
+        placeholder: "••••••••" %>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <%= f.check_box :remember_me, class: "w-4 h-4 rounded border-sv-border bg-sv-card text-sv-primary focus:ring-sv-primary/30" %>
+      <%= f.label :remember_me, "Remember me", class: "text-sm text-sv-text-muted" %>
+    </div>
+    <% if devise_mapping.recoverable? && controller_name != "passwords" && controller_name != "registrations" %>
+      <%= link_to "Forgot password?", new_password_path(resource_name), class: "text-sm text-sv-primary-light hover:text-sv-primary transition-colors" %>
+    <% end %>
+  </div>
+
+  <%= f.submit "Sign In", class: "sv-btn-primary w-full cursor-pointer text-center" %>
+<% end %>
+
+<div class="mt-6 text-center">
+  <p class="text-sv-text-muted text-sm">
+    Don't have an account?
+    <%= link_to "Create one", new_registration_path(resource_name), class: "text-sv-primary-light hover:text-sv-primary font-medium transition-colors" %>
+  </p>
+</div>

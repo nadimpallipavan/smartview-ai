@@ -1,0 +1,50 @@
+<% content_for :title, "Edit #{@user.name}" %>
+
+<div class="flex items-center gap-3 mb-6">
+  <%= link_to admin_user_path(@user), class: "text-sv-text-muted hover:text-sv-text transition-colors" do %>
+    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+  <% end %>
+  <h1 class="text-2xl font-bold text-white">Edit User: <%= @user.name %></h1>
+</div>
+
+<div class="sv-card p-6 max-w-lg">
+  <%= form_with model: [:admin, @user], class: "space-y-5" do |f| %>
+    <% if @user.errors.any? %>
+      <div class="px-4 py-3 bg-sv-accent/10 border border-sv-accent/30 rounded-xl text-sv-accent text-sm space-y-1">
+        <% @user.errors.full_messages.each do |msg| %>
+          <p><%= msg %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :name, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.text_field :name, class: "sv-input" %>
+    </div>
+
+    <div>
+      <%= f.label :subscription_tier, "Subscription Tier", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.select :subscription_tier,
+          [["Free", "free"], ["Basic", "basic"], ["Premium", "premium"], ["Enterprise", "enterprise"]],
+          {}, class: "sv-input" %>
+    </div>
+
+    <div>
+      <%= f.label :max_streams, "Max Simultaneous Streams", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.number_field :max_streams, class: "sv-input", min: 1, max: 10 %>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <%= f.check_box :admin, class: "w-4 h-4 rounded border-sv-border bg-sv-card text-sv-primary" %>
+      <%= f.label :admin, class: "text-sm text-sv-text" do %>
+        <span class="font-medium">Admin Access</span>
+        <span class="text-sv-text-muted ml-1">— Full admin panel access</span>
+      <% end %>
+    </div>
+
+    <div class="flex items-center gap-3 pt-2">
+      <%= f.submit "Save Changes", class: "sv-btn-primary cursor-pointer" %>
+      <%= link_to "Cancel", admin_user_path(@user), class: "sv-btn-ghost" %>
+    </div>
+  <% end %>
+</div>

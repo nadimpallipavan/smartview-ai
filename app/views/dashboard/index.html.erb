@@ -1,0 +1,228 @@
+<% content_for :title, "Home" %>
+
+<div class="p-6 space-y-8">
+  <!-- Hero / Featured Content -->
+  <% if @featured.any? %>
+    <div class="relative rounded-2xl overflow-hidden h-80 lg:h-96 group">
+      <% featured = @featured.first %>
+      <div class="absolute inset-0">
+        <img src="<%= featured.backdrop_url %>" alt="<%= featured.title %>"
+             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+             onerror="this.src='https://via.placeholder.com/1280x720/0a0a0f/6366f1?text=<%= CGI.escape(featured.title) %>'">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-sv-dark/80 to-transparent"></div>
+      </div>
+
+      <div class="relative h-full flex items-end p-8">
+        <div class="max-w-lg animate-fade-in">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="sv-badge-primary"><%= featured.genre %></span>
+            <span class="text-sv-text-muted text-sm"><%= featured.year %></span>
+            <% if featured.rating %>
+              <span class="text-sv-warning text-sm font-medium">★ <%= featured.rating %></span>
+            <% end %>
+          </div>
+          <h2 class="text-3xl lg:text-4xl font-black text-white mb-3"><%= featured.title %></h2>
+          <p class="text-sv-text-muted line-clamp-2 mb-5 text-sm lg:text-base"><%= featured.description %></p>
+          <div class="flex items-center gap-3">
+            <%= link_to player_path(featured), class: "sv-btn-primary flex items-center gap-2" do %>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              Play Now
+            <% end %>
+            <%= link_to content_path(featured), class: "sv-btn-secondary flex items-center gap-2" do %>
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              More Info
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured thumbnails -->
+      <div class="absolute top-4 right-4 flex gap-2">
+        <% @featured.drop(1).first(4).each do |f| %>
+          <%= link_to player_path(f), class: "block w-16 h-24 rounded-lg overflow-hidden opacity-70 hover:opacity-100 transition-opacity border border-sv-border/50 hover:border-sv-primary/50" do %>
+            <img src="<%= f.poster_url %>" alt="<%= f.title %>" class="w-full h-full object-cover"
+                 onerror="this.src='https://via.placeholder.com/100x150/1a1a28/6366f1?text=<%= CGI.escape(f.title[0..2]) %>'">
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Continue Watching -->
+  <% if @continue_watching.any? %>
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-white">Continue Watching</h2>
+      </div>
+      <div class="sv-content-row">
+        <div class="sv-row-track">
+          <% @continue_watching.each do |vh| %>
+            <div class="flex-shrink-0 w-48 lg:w-56">
+              <%= link_to player_path(vh.content), class: "sv-poster-card block" do %>
+                <div class="aspect-video bg-sv-card rounded-xl overflow-hidden">
+                  <img src="<%= vh.content.backdrop_url %>" alt="<%= vh.content.title %>"
+                       class="w-full h-full object-cover"
+                       onerror="this.src='https://via.placeholder.com/280x157/12121a/6366f1?text=<%= CGI.escape(vh.content.title[0..10]) %>'">
+                </div>
+                <div class="mt-2 px-1">
+                  <p class="text-sv-text text-sm font-medium line-clamp-1"><%= vh.content.title %></p>
+                  <div class="mt-1.5 h-0.5 bg-sv-border rounded-full">
+                    <div class="h-full bg-sv-primary rounded-full" style="width: <%= vh.percentage_watched %>%"></div>
+                  </div>
+                  <p class="text-sv-text-muted text-xs mt-1"><%= vh.percentage_watched %>% watched</p>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- AI Recommended for You -->
+  <% if @recommendations.any? %>
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-bold text-white">Recommended for You</h2>
+          <p class="text-xs text-sv-text-muted mt-0.5">Personalized for <%= @profile.name %></p>
+        </div>
+        <%= link_to recommendations_path, class: "text-sv-primary-light text-sm hover:text-sv-primary transition-colors" do %>
+          See all &rarr;
+        <% end %>
+      </div>
+      <div class="sv-content-row">
+        <div class="sv-row-track">
+          <% @recommendations.each do |rec| %>
+            <div class="flex-shrink-0 w-36 lg:w-44">
+              <%= link_to player_path(rec.content), class: "sv-poster-card block" do %>
+                <div class="aspect-[2/3] bg-sv-card rounded-xl overflow-hidden relative">
+                  <img src="<%= rec.content.poster_url %>" alt="<%= rec.content.title %>"
+                       class="w-full h-full object-cover"
+                       onerror="this.src='https://via.placeholder.com/176x264/12121a/6366f1?text=<%= CGI.escape(rec.content.title[0..8]) %>'">
+                  <div class="sv-poster-overlay">
+                    <p class="text-white font-semibold text-sm line-clamp-2"><%= rec.content.title %></p>
+                    <p class="text-sv-text-muted text-xs mt-1"><%= rec.reason %></p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- Trending Now -->
+  <% if @trending.any? %>
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-white">Trending Now</h2>
+        <%= link_to contents_path, class: "text-sv-primary-light text-sm hover:text-sv-primary transition-colors" do %>
+          Browse all &rarr;
+        <% end %>
+      </div>
+      <div class="sv-content-row">
+        <div class="sv-row-track">
+          <% @trending.each do |content| %>
+            <div class="flex-shrink-0 w-36 lg:w-44">
+              <%= link_to player_path(content), class: "sv-poster-card block" do %>
+                <div class="aspect-[2/3] bg-sv-card rounded-xl overflow-hidden relative">
+                  <img src="<%= content.poster_url %>" alt="<%= content.title %>"
+                       class="w-full h-full object-cover"
+                       onerror="this.src='https://via.placeholder.com/176x264/12121a/6366f1?text=<%= CGI.escape(content.title[0..8]) %>'">
+                  <div class="sv-poster-overlay">
+                    <p class="text-white font-semibold text-sm line-clamp-2"><%= content.title %></p>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span class="text-sv-warning text-xs">&#9733; <%= content.rating %></span>
+                      <span class="text-sv-text-muted text-xs"><%= content.genre %></span>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- Live Now -->
+  <% if @live_streams.any? %>
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <h2 class="text-xl font-bold text-white">Live Now</h2>
+          <span class="sv-badge-live">&#9679; LIVE</span>
+        </div>
+        <%= link_to streams_path, class: "text-sv-primary-light text-sm hover:text-sv-primary transition-colors" do %>
+          All channels &rarr;
+        <% end %>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <% @live_streams.each do |stream| %>
+          <%= link_to stream_path(stream), class: "sv-card p-4 flex flex-col items-center text-center group" do %>
+            <div class="w-12 h-12 rounded-xl bg-sv-primary/10 border border-sv-primary/20 flex items-center justify-center mb-2 group-hover:border-sv-primary/50 transition-colors">
+              <svg class="w-6 h-6 text-sv-primary-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728M13 12a1 1 0 11-2 0 1 1 0 012 0z"/>
+              </svg>
+            </div>
+            <p class="text-sv-text text-sm font-medium line-clamp-1"><%= stream.name %></p>
+            <p class="text-sv-text-muted text-xs"><%= stream.category %></p>
+            <span class="sv-badge-live text-xs mt-1">LIVE</span>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- Genre Rows -->
+  <% @genre_rows.each do |genre, contents| %>
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-white">
+          <span class="mr-2"><%= genre_icon(genre) %></span><%= genre %>
+        </h2>
+        <%= link_to genre_contents_path(name: genre), class: "text-sv-primary-light text-sm hover:text-sv-primary transition-colors" do %>
+          See all &rarr;
+        <% end %>
+      </div>
+      <div class="sv-content-row">
+        <div class="sv-row-track">
+          <% contents.each do |content| %>
+            <div class="flex-shrink-0 w-36 lg:w-44">
+              <%= link_to player_path(content), class: "sv-poster-card block" do %>
+                <div class="aspect-[2/3] bg-sv-card rounded-xl overflow-hidden relative">
+                  <img src="<%= content.poster_url %>" alt="<%= content.title %>"
+                       class="w-full h-full object-cover"
+                       onerror="this.src='https://via.placeholder.com/176x264/12121a/6366f1?text=<%= CGI.escape(content.title[0..8]) %>'">
+                  <div class="sv-poster-overlay">
+                    <p class="text-white font-semibold text-sm line-clamp-2"><%= content.title %></p>
+                    <p class="text-sv-text-muted text-xs mt-1"><%= content.year %> &middot; <%= content.formatted_duration %></p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- Empty state -->
+  <% if @featured.empty? && @trending.empty? %>
+    <div class="text-center py-20">
+      <div class="w-16 h-16 rounded-full bg-sv-primary/10 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-sv-primary-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-2">No content yet</h3>
+      <p class="text-sv-text-muted mb-6">Ask an admin to add content to the platform.</p>
+      <% if current_user&.admin? %>
+        <%= link_to "Add Content", new_admin_content_path, class: "sv-btn-primary" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

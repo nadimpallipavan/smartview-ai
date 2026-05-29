@@ -1,0 +1,74 @@
+<% content_for :title, "Edit #{@profile.name}" %>
+
+<div class="max-w-lg mx-auto p-6">
+  <div class="mb-6">
+    <%= link_to profiles_path, class: "text-sv-text-muted hover:text-sv-text text-sm flex items-center gap-1 transition-colors" do %>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Back to Profiles
+    <% end %>
+  </div>
+
+  <div class="sv-card p-8">
+    <div class="flex items-center gap-4 mb-6">
+      <div class="sv-profile-avatar bg-gradient-to-br <%= @profile.avatar_gradient %> w-16 h-16 text-xl">
+        <%= @profile.initials %>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-white">Edit Profile</h1>
+        <p class="text-sv-text-muted text-sm"><%= @profile.name %></p>
+      </div>
+    </div>
+
+    <%= form_with model: @profile, url: profile_path(@profile), method: :patch, class: "space-y-5" do |f| %>
+      <% if @profile.errors.any? %>
+        <div class="px-4 py-3 bg-sv-accent/10 border border-sv-accent/30 rounded-xl text-sv-accent text-sm">
+          <% @profile.errors.full_messages.each do |msg| %>
+            <p><%= msg %></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :name, "Profile Name", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.text_field :name, class: "sv-input" %>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <%= f.check_box :is_kids, class: "w-4 h-4 rounded border-sv-border bg-sv-card text-sv-primary focus:ring-sv-primary/30" %>
+        <%= f.label :is_kids, class: "text-sm text-sv-text" do %>
+          <span class="font-medium">Kids Profile</span>
+          <span class="text-sv-text-muted ml-1">— Restricts content to age-appropriate titles</span>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :avatar, "Profile Photo", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <% if @profile.avatar.attached? %>
+          <div class="mb-2">
+            <%= image_tag @profile.avatar, class: "w-16 h-16 rounded-full object-cover border border-sv-border" %>
+          </div>
+        <% end %>
+        <%= f.file_field :avatar, class: "block w-full text-sm text-sv-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-sv-primary/10 file:text-sv-primary-light hover:file:bg-sv-primary/20", accept: "image/*" %>
+      </div>
+
+      <div class="pt-4 border-t border-sv-border">
+        <p class="text-sm font-medium text-sv-text mb-3">Face Recognition</p>
+        <% if @profile.has_face_enrolled? %>
+          <div class="flex items-center gap-2 text-sv-success text-sm mb-3">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Face enrolled successfully
+          </div>
+        <% end %>
+        <%= link_to enroll_face_profile_path(@profile), class: "sv-btn-secondary text-sm inline-flex items-center gap-2" do %>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <%= @profile.has_face_enrolled? ? "Re-enroll Face" : "Enroll Face" %>
+        <% end %>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2">
+        <%= f.submit "Save Changes", class: "sv-btn-primary cursor-pointer" %>
+        <%= link_to "Cancel", profiles_path, class: "sv-btn-ghost" %>
+      </div>
+    <% end %>
+  </div>
+</div>

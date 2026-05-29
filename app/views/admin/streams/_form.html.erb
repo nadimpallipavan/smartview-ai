@@ -1,0 +1,71 @@
+<% if stream.errors.any? %>
+  <div class="px-4 py-3 bg-sv-accent/10 border border-sv-accent/30 rounded-xl text-sv-accent text-sm space-y-1 mb-6">
+    <% stream.errors.full_messages.each do |msg| %>
+      <p><%= msg %></p>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="space-y-5">
+    <div>
+      <%= f.label :name, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.text_field :name, class: "sv-input", placeholder: "Channel name" %>
+    </div>
+
+    <div>
+      <%= f.label :description, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.text_area :description, rows: 3, class: "sv-input resize-none", placeholder: "Channel description..." %>
+    </div>
+
+    <div>
+      <%= f.label :hls_url, "HLS Stream URL (.m3u8)", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.url_field :hls_url, class: "sv-input", placeholder: "https://example.com/live.m3u8" %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :category, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.select :category, Stream::CATEGORIES, { include_blank: "Select category" }, class: "sv-input" %>
+      </div>
+      <div>
+        <%= f.label :channel_number, "Channel #", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.number_field :channel_number, class: "sv-input", placeholder: "1" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="space-y-5">
+    <div>
+      <%= f.label :logo_url, "Logo URL (optional)", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.url_field :logo_url, class: "sv-input", placeholder: "https://example.com/logo.png" %>
+    </div>
+
+    <div>
+      <%= f.label :logo, "Logo Upload (overrides URL)", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.file_field :logo, class: "block w-full text-sm text-sv-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-sv-primary/10 file:text-sv-primary-light hover:file:bg-sv-primary/20", accept: "image/*" %>
+    </div>
+
+    <div class="space-y-3 pt-2">
+      <div class="flex items-center gap-3">
+        <%= f.check_box :is_active, class: "w-4 h-4 rounded border-sv-border bg-sv-card text-sv-primary" %>
+        <%= f.label :is_active, class: "text-sm text-sv-text" do %>
+          <span class="font-medium">Active</span>
+          <span class="text-sv-text-muted ml-1">— Channel visible in listings</span>
+        <% end %>
+      </div>
+      <div class="flex items-center gap-3">
+        <%= f.check_box :is_live, class: "w-4 h-4 rounded border-sv-border bg-sv-card text-sv-primary" %>
+        <%= f.label :is_live, class: "text-sm text-sv-text" do %>
+          <span class="font-medium">Live Now</span>
+          <span class="text-sv-text-muted ml-1">— Show LIVE badge</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flex items-center gap-3 mt-6 pt-6 border-t border-sv-border">
+  <%= f.submit class: "sv-btn-primary cursor-pointer" %>
+  <%= link_to "Cancel", admin_streams_path, class: "sv-btn-ghost" %>
+</div>

@@ -1,0 +1,87 @@
+<% content_for :title, @profile.name %>
+
+<div class="p-6 max-w-5xl">
+  <!-- Profile Header -->
+  <div class="flex items-start gap-6 mb-8">
+    <div class="sv-profile-avatar bg-gradient-to-br <%= @profile.avatar_gradient %> w-20 h-20 text-2xl flex-shrink-0">
+      <% if @profile.avatar.attached? %>
+        <%= image_tag @profile.avatar, class: "w-full h-full object-cover rounded-full" %>
+      <% else %>
+        <%= @profile.initials %>
+      <% end %>
+    </div>
+    <div class="flex-1">
+      <div class="flex items-center gap-3 flex-wrap">
+        <h1 class="text-2xl font-bold text-white"><%= @profile.name %></h1>
+        <% if @profile.is_kids %>
+          <span class="sv-badge bg-sv-warning/20 text-sv-warning">Kids</span>
+        <% end %>
+        <% if @profile.is_default %>
+          <span class="sv-badge bg-sv-primary/20 text-sv-primary-light">Default</span>
+        <% end %>
+        <% if @profile.has_face_enrolled? %>
+          <span class="sv-badge bg-sv-success/20 text-sv-success">Face Enrolled</span>
+        <% end %>
+      </div>
+      <p class="text-sv-text-muted text-sm mt-1"><%= @viewing_history.count %> titles watched</p>
+      <div class="flex gap-3 mt-3">
+        <%= link_to edit_profile_path(@profile), class: "sv-btn-secondary text-sm px-4 py-2 inline-flex items-center gap-1.5" do %>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          Edit Profile
+        <% end %>
+        <%= link_to enroll_face_profile_path(@profile), class: "sv-btn-ghost text-sm px-4 py-2 inline-flex items-center gap-1.5" do %>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Face ID
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Watch History -->
+  <div>
+    <h2 class="text-xl font-bold text-white mb-4">Watch History</h2>
+    <% if @viewing_history.any? %>
+      <div class="space-y-3">
+        <% @viewing_history.each do |vh| %>
+          <div class="sv-card p-4 flex items-center gap-4">
+            <%= link_to player_path(vh.content), class: "flex-shrink-0 w-24 h-16 rounded-lg overflow-hidden bg-sv-card-hover" do %>
+              <img src="<%= vh.content.backdrop_url %>" alt="<%= vh.content.title %>"
+                   class="w-full h-full object-cover"
+                   onerror="this.src='https://via.placeholder.com/96x64/1a1a28/6366f1?text=<%= CGI.escape(vh.content.title[0..3]) %>'">
+            <% end %>
+
+            <div class="flex-1 min-w-0">
+              <%= link_to player_path(vh.content), class: "text-white font-semibold hover:text-sv-primary-light transition-colors" do %>
+                <%= vh.content.title %>
+              <% end %>
+              <div class="flex items-center gap-3 mt-1">
+                <span class="text-sv-text-muted text-xs"><%= vh.content.genre %></span>
+                <span class="text-sv-text-muted text-xs">&middot;</span>
+                <span class="text-sv-text-muted text-xs">Watched <%= time_ago_short(vh.watched_at) %></span>
+                <% if vh.completed %>
+                  <span class="sv-badge bg-sv-success/20 text-sv-success text-xs">Completed</span>
+                <% end %>
+              </div>
+              <div class="mt-2 h-0.5 bg-sv-border rounded-full max-w-xs">
+                <div class="h-full bg-sv-primary rounded-full" style="width: <%= vh.percentage_watched %>%"></div>
+              </div>
+            </div>
+
+            <div class="flex-shrink-0 text-right">
+              <p class="text-sv-text font-bold text-sm"><%= vh.percentage_watched %>%</p>
+              <p class="text-sv-text-muted text-xs">watched</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="sv-card p-8 text-center">
+        <svg class="w-12 h-12 text-sv-text-muted mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+        </svg>
+        <p class="text-sv-text-muted">No watch history yet</p>
+        <%= link_to "Browse Content", contents_path, class: "sv-btn-primary mt-4 text-sm" %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <title><%= page_title(yield(:title)) %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
+<body class="h-full bg-sv-dark flex items-center justify-center">
+  <div class="w-full max-w-md mx-auto px-4">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sv-primary to-sv-secondary flex items-center justify-center">
+          <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <span class="text-3xl font-bold bg-gradient-to-r from-sv-primary-light to-sv-secondary bg-clip-text text-transparent">SmartView AI</span>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    <% if notice %>
+      <div class="mb-4 px-4 py-3 bg-sv-success/10 border border-sv-success/30 rounded-xl text-sv-success text-sm"><%= notice %></div>
+    <% end %>
+    <% if alert %>
+      <div class="mb-4 px-4 py-3 bg-sv-accent/10 border border-sv-accent/30 rounded-xl text-sv-accent text-sm"><%= alert %></div>
+    <% end %>
+
+    <!-- Content -->
+    <div class="sv-card p-8">
+      <%= yield %>
+    </div>
+  </div>
+</body>
+</html>

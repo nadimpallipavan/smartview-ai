@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@layer base {
+  body {
+    @apply bg-sv-dark text-sv-text font-body antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-sv-darker;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-sv-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-sv-primary/50;
+  }
+}
+
+@layer components {
+  /* Card styles */
+  .sv-card {
+    @apply bg-sv-card rounded-xl border border-sv-border/50 transition-all duration-300;
+  }
+
+  .sv-card:hover {
+    @apply bg-sv-card-hover border-sv-primary/30 shadow-card-hover transform -translate-y-1;
+  }
+
+  /* Content poster card */
+  .sv-poster-card {
+    @apply relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300;
+  }
+
+  .sv-poster-card:hover {
+    @apply transform scale-105 shadow-glow-md z-10;
+  }
+
+  .sv-poster-card .sv-poster-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent
+           opacity-0 transition-opacity duration-300
+           flex flex-col justify-end p-4;
+  }
+
+  .sv-poster-card:hover .sv-poster-overlay {
+    @apply opacity-100;
+  }
+
+  /* Buttons */
+  .sv-btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-sv-gradient-start to-sv-gradient-end
+           text-white font-semibold rounded-xl
+           hover:shadow-glow-md transition-all duration-300
+           focus:outline-none focus:ring-2 focus:ring-sv-primary/50;
+  }
+
+  .sv-btn-secondary {
+    @apply px-6 py-3 bg-sv-card border border-sv-border text-sv-text
+           font-semibold rounded-xl
+           hover:bg-sv-card-hover hover:border-sv-primary/30 transition-all duration-300;
+  }
+
+  .sv-btn-ghost {
+    @apply px-4 py-2 text-sv-text-muted hover:text-sv-text
+           hover:bg-sv-card transition-all duration-200 rounded-lg;
+  }
+
+  /* Input styles */
+  .sv-input {
+    @apply w-full px-4 py-3 bg-sv-card border border-sv-border rounded-xl
+           text-sv-text placeholder-sv-text-muted/50
+           focus:outline-none focus:border-sv-primary focus:ring-1 focus:ring-sv-primary/30
+           transition-all duration-200;
+  }
+
+  /* Badge */
+  .sv-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .sv-badge-primary {
+    @apply sv-badge bg-sv-primary/20 text-sv-primary-light;
+  }
+
+  .sv-badge-live {
+    @apply sv-badge bg-red-500/20 text-red-400 animate-pulse-slow;
+  }
+
+  /* Content row */
+  .sv-content-row {
+    @apply relative;
+  }
+
+  .sv-content-row .sv-row-track {
+    @apply flex gap-4 overflow-x-auto pb-4 scrollbar-none scroll-smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .sv-content-row .sv-row-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Navigation */
+  .sv-nav-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-sv-text-muted
+           hover:text-sv-text hover:bg-sv-card transition-all duration-200
+           border-l-2 border-transparent;
+  }
+
+  .sv-nav-link.active {
+    @apply bg-sv-primary/10 text-sv-primary-light border-sv-primary;
+  }
+
+  /* Player controls */
+  .sv-player-controls {
+    @apply absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent
+           p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300;
+  }
+
+  .sv-progress-bar {
+    @apply relative h-1 bg-sv-border rounded-full cursor-pointer;
+  }
+
+  .sv-progress-bar::after {
+    content: '';
+    @apply absolute left-0 top-0 h-full bg-gradient-to-r from-sv-primary to-sv-secondary rounded-full;
+    width: var(--progress, 0%);
+  }
+
+  .sv-progress-bar:hover {
+    @apply h-2;
+  }
+
+  /* Glass morphism */
+  .sv-glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+
+  /* Shimmer loading effect */
+  .sv-shimmer {
+    @apply bg-gradient-to-r from-sv-card via-sv-card-hover to-sv-card;
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  /* Profile avatar */
+  .sv-profile-avatar {
+    @apply w-12 h-12 rounded-full flex items-center justify-center
+           text-white font-bold text-lg shadow-lg cursor-pointer
+           transition-all duration-300 hover:scale-110 hover:shadow-glow-sm;
+  }
+
+  /* Now playing bar */
+  .sv-now-playing {
+    @apply fixed bottom-0 left-0 right-0 bg-sv-darker/95 backdrop-blur-xl
+           border-t border-sv-border p-3 z-50 animate-slide-up;
+  }
+}
+
+/* Custom scrollbar for content rows */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Multiscreen grid layouts */
+.multiscreen-grid-1 { @apply grid grid-cols-1; }
+.multiscreen-grid-2 { @apply grid grid-cols-2; }
+.multiscreen-grid-3 { @apply grid grid-cols-2 grid-rows-2; }
+.multiscreen-grid-3 > :first-child { @apply col-span-2; }
+.multiscreen-grid-4 { @apply grid grid-cols-2 grid-rows-2; }
+.multiscreen-grid-5 { @apply grid grid-cols-3 grid-rows-2; }
+.multiscreen-grid-5 > :first-child { @apply col-span-2; }

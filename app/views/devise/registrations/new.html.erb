@@ -1,0 +1,54 @@
+<% content_for :title, "Create Account" %>
+
+<h2 class="text-2xl font-bold text-white mb-2">Create your account</h2>
+<p class="text-sv-text-muted text-sm mb-6">Start streaming with AI-powered recommendations</p>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-4" }) do |f| %>
+  <% if resource.errors.any? %>
+    <div class="px-4 py-3 bg-sv-accent/10 border border-sv-accent/30 rounded-xl text-sv-accent text-sm space-y-1">
+      <% resource.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "Full Name", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+    <%= f.text_field :name, autofocus: true,
+        class: "sv-input",
+        placeholder: "John Smith" %>
+  </div>
+
+  <div>
+    <%= f.label :email, "Email address", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+    <%= f.email_field :email, autocomplete: "email",
+        class: "sv-input",
+        placeholder: "you@example.com" %>
+  </div>
+
+  <div>
+    <%= f.label :password, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+    <%= f.password_field :password, autocomplete: "new-password",
+        class: "sv-input",
+        placeholder: "At least 6 characters" %>
+    <% if @minimum_password_length %>
+      <p class="text-xs text-sv-text-muted mt-1">Minimum <%= @minimum_password_length %> characters</p>
+    <% end %>
+  </div>
+
+  <div>
+    <%= f.label :password_confirmation, "Confirm Password", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password",
+        class: "sv-input",
+        placeholder: "••••••••" %>
+  </div>
+
+  <%= f.submit "Create Account", class: "sv-btn-primary w-full cursor-pointer text-center" %>
+<% end %>
+
+<div class="mt-6 text-center">
+  <p class="text-sv-text-muted text-sm">
+    Already have an account?
+    <%= link_to "Sign in", new_session_path(resource_name), class: "text-sv-primary-light hover:text-sv-primary font-medium transition-colors" %>
+  </p>
+</div>

@@ -1,0 +1,68 @@
+<% content_for :title, @content.title %>
+
+<div class="flex items-center gap-3 mb-6">
+  <%= link_to admin_contents_path, class: "text-sv-text-muted hover:text-sv-text transition-colors" do %>
+    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+  <% end %>
+  <h1 class="text-2xl font-bold text-white"><%= @content.title %></h1>
+  <div class="ml-auto flex items-center gap-2">
+    <%= link_to edit_admin_content_path(@content), class: "sv-btn-secondary text-sm" do %>
+      Edit
+    <% end %>
+    <%= button_to admin_content_path(@content), method: :delete,
+        class: "sv-btn-ghost text-sv-accent text-sm",
+        data: { turbo_confirm: "Delete \"#{@content.title}\"? This cannot be undone." },
+        form: { data: { turbo_confirm: "Delete \"#{@content.title}\"?" } } do %>
+      Delete
+    <% end %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- Poster -->
+  <div class="lg:col-span-1">
+    <div class="sv-card overflow-hidden">
+      <img src="<%= @content.poster_url %>" alt="<%= @content.title %>"
+           class="w-full aspect-[2/3] object-cover"
+           onerror="this.src='https://via.placeholder.com/300x450/12121a/6366f1?text=<%= CGI.escape(@content.title[0..8]) %>'">
+    </div>
+  </div>
+
+  <!-- Details -->
+  <div class="lg:col-span-2 space-y-4">
+    <div class="sv-card p-5">
+      <h2 class="text-sm font-semibold text-sv-text-muted uppercase tracking-wider mb-4">Details</h2>
+      <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+        <div><dt class="text-sv-text-muted">Type</dt><dd class="text-sv-text font-medium capitalize"><%= @content.content_type %></dd></div>
+        <div><dt class="text-sv-text-muted">Genre</dt><dd class="text-sv-text font-medium"><%= @content.genre %></dd></div>
+        <div><dt class="text-sv-text-muted">Year</dt><dd class="text-sv-text font-medium"><%= @content.year || "N/A" %></dd></div>
+        <div><dt class="text-sv-text-muted">Duration</dt><dd class="text-sv-text font-medium"><%= @content.formatted_duration %></dd></div>
+        <div><dt class="text-sv-text-muted">Rating</dt><dd class="text-sv-text font-medium"><%= @content.rating || "N/A" %>/10</dd></div>
+        <div><dt class="text-sv-text-muted">Maturity</dt><dd class="text-sv-text font-medium"><%= @content.maturity_rating || "N/A" %></dd></div>
+        <div><dt class="text-sv-text-muted">Language</dt><dd class="text-sv-text font-medium"><%= @content.language || "N/A" %></dd></div>
+        <div><dt class="text-sv-text-muted">Views</dt><dd class="text-sv-text font-medium"><%= @content.view_count.to_i %></dd></div>
+        <div><dt class="text-sv-text-muted">Published</dt><dd class="text-sv-text font-medium"><%= @content.published? ? "Yes" : "No" %></dd></div>
+        <div><dt class="text-sv-text-muted">Featured</dt><dd class="text-sv-text font-medium"><%= @content.featured? ? "Yes" : "No" %></dd></div>
+      </dl>
+    </div>
+
+    <% if @content.hls_url.present? %>
+      <div class="sv-card p-4">
+        <p class="text-sm font-semibold text-sv-text-muted uppercase tracking-wider mb-2">HLS URL</p>
+        <p class="text-sv-text text-xs font-mono break-all"><%= @content.hls_url %></p>
+      </div>
+    <% end %>
+
+    <div class="sv-card p-4">
+      <p class="text-sm font-semibold text-sv-text-muted uppercase tracking-wider mb-2">Description</p>
+      <p class="text-sv-text text-sm leading-relaxed"><%= @content.description || "No description." %></p>
+    </div>
+
+    <div class="flex gap-3">
+      <%= link_to player_path(@content), class: "sv-btn-primary text-sm flex items-center gap-2", target: "_blank" do %>
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        Preview Player
+      <% end %>
+    </div>
+  </div>
+</div>

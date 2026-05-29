@@ -1,0 +1,91 @@
+<% content_for :title, "Catalog" %>
+
+<div class="p-6">
+  <!-- Header & Filters -->
+  <div class="flex flex-col lg:flex-row lg:items-center gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Content Catalog</h1>
+      <p class="text-sv-text-muted text-sm mt-0.5">Browse all movies, series &amp; documentaries</p>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="flex flex-wrap items-center gap-3 lg:ml-auto">
+      <!-- Genre Filter -->
+      <%= form_with url: contents_path, method: :get, class: "flex gap-3 flex-wrap", data: { turbo: false } do |f| %>
+        <% if params[:type].present? %>
+          <%= hidden_field_tag :type, params[:type] %>
+        <% end %>
+        <%= f.select :genre,
+            [["All Genres", ""]] + @genres,
+            { selected: params[:genre] },
+            class: "sv-input text-sm py-2 w-auto min-w-36" %>
+
+        <!-- Type Filter -->
+        <%= f.select :type,
+            [["All Types", ""], ["Movies", "movie"], ["Series", "series"], ["Documentaries", "documentary"]],
+            { selected: params[:type] },
+            class: "sv-input text-sm py-2 w-auto min-w-36" %>
+
+        <%= f.submit "Filter", class: "sv-btn-primary text-sm px-5 py-2 cursor-pointer" %>
+
+        <% if params[:genre].present? || params[:type].present? %>
+          <%= link_to "Clear", contents_path, class: "sv-btn-ghost text-sm py-2" %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Active filters badge -->
+  <% if params[:genre].present? || params[:type].present? %>
+    <div class="flex items-center gap-2 mb-4">
+      <span class="text-sv-text-muted text-sm">Filtering by:</span>
+      <% if params[:genre].present? %>
+        <span class="sv-badge-primary"><%= genre_icon(params[:genre]) %> <%= params[:genre] %></span>
+      <% end %>
+      <% if params[:type].present? %>
+        <span class="sv-badge-primary"><%= params[:type].capitalize %></span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Content Grid -->
+  <% if @contents.any? %>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-8">
+      <% @contents.each do |content| %>
+        <%= render "contents/content_card", content: content %>
+      <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <% if @pagy && @pagy.pages > 1 %>
+      <div class="flex items-center justify-center gap-2">
+        <% if @pagy.prev %>
+          <%= link_to "&larr; Previous".html_safe, contents_path(page: @pagy.prev, genre: params[:genre], type: params[:type]),
+              class: "sv-btn-secondary text-sm px-4 py-2" %>
+        <% end %>
+        <span class="text-sv-text-muted text-sm">Page <%= @pagy.page %> of <%= @pagy.pages %></span>
+        <% if @pagy.next %>
+          <%= link_to "Next &rarr;".html_safe, contents_path(page: @pagy.next, genre: params[:genre], type: params[:type]),
+              class: "sv-btn-secondary text-sm px-4 py-2" %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="text-center py-20">
+      <svg class="w-16 h-16 text-sv-text-muted mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4"/>
+      </svg>
+      <h3 class="text-xl font-bold text-white mb-2">No content found</h3>
+      <p class="text-sv-text-muted">
+        <% if params[:genre].present? || params[:type].present? %>
+          Try clearing your filters or browse a different category.
+        <% else %>
+          Content will appear here once added by an admin.
+        <% end %>
+      </p>
+      <% if params[:genre].present? || params[:type].present? %>
+        <%= link_to "Clear Filters", contents_path, class: "sv-btn-primary mt-4 text-sm" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,52 @@
+<% content_for :title, @user.name %>
+
+<div class="flex items-center gap-3 mb-6">
+  <%= link_to admin_users_path, class: "text-sv-text-muted hover:text-sv-text transition-colors" do %>
+    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+  <% end %>
+  <h1 class="text-2xl font-bold text-white"><%= @user.name %></h1>
+  <div class="ml-auto flex items-center gap-2">
+    <%= link_to edit_admin_user_path(@user), class: "sv-btn-secondary text-sm" do %>Edit<% end %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="sv-card p-5">
+    <h2 class="text-sm font-semibold text-sv-text-muted uppercase tracking-wider mb-4">Account Details</h2>
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Email</dt><dd class="text-sv-text"><%= @user.email %></dd></div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Subscription</dt>
+        <dd><span class="sv-badge-primary capitalize"><%= @user.subscription_tier %></span></dd>
+      </div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Max Streams</dt><dd class="text-sv-text"><%= @user.max_streams %></dd></div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Admin</dt><dd class="text-sv-text"><%= @user.admin? ? "Yes" : "No" %></dd></div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Profiles</dt><dd class="text-sv-text"><%= @user.profiles.count %></dd></div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Joined</dt><dd class="text-sv-text"><%= @user.created_at.strftime("%B %d, %Y") %></dd></div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Last Sign In</dt><dd class="text-sv-text"><%= @user.last_sign_in_at&.strftime("%B %d, %Y") || "Never" %></dd></div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Sign In Count</dt><dd class="text-sv-text"><%= @user.sign_in_count %></dd></div>
+    </dl>
+  </div>
+
+  <div class="sv-card p-5">
+    <h2 class="text-sm font-semibold text-sv-text-muted uppercase tracking-wider mb-4">Profiles (<%= @user.profiles.count %>)</h2>
+    <div class="space-y-2">
+      <% @user.profiles.each do |profile| %>
+        <div class="flex items-center gap-3 p-2 rounded-lg bg-sv-dark">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br <%= profile.avatar_gradient %> flex items-center justify-center flex-shrink-0">
+            <span class="text-white text-xs font-bold"><%= profile.initials %></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sv-text text-sm font-medium truncate"><%= profile.name %></p>
+            <p class="text-sv-text-muted text-xs">
+              <%= profile.is_kids? ? "Kids · " : "" %><%= profile.viewing_histories.count %> watched
+              <% if profile.has_face_enrolled? %> · Face enrolled<% end %>
+            </p>
+          </div>
+          <% if profile.is_default? %>
+            <span class="sv-badge-primary text-xs">Default</span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

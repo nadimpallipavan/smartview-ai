@@ -1,0 +1,48 @@
+# Secrets & environment
+.env
+.env.*
+!.env.example
+config/master.key
+config/credentials/*.key
+
+# Rails runtime
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/.keep
+/tmp/cache/*
+!/tmp/cache/.keep
+
+# Active Storage local files
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+
+# Precompiled assets (built at deploy time)
+/public/assets
+/app/assets/builds/*
+!/app/assets/builds/.keep
+.sass-cache/
+
+# Dependencies
+/vendor/bundle
+/.bundle
+
+# Build / local logs
+docker-build*.log
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Bootsnap cache
+/tmp/bootsnap*
+
+# Claude Code harness files
+.claude/

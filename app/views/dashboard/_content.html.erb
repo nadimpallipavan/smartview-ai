@@ -1,0 +1,32 @@
+<div id="main-content-inner" class="p-6 space-y-6">
+  <div class="flex items-center gap-3 mb-2">
+    <div class="sv-profile-avatar bg-gradient-to-br <%= profile.avatar_gradient %> w-10 h-10 text-sm">
+      <%= profile.initials %>
+    </div>
+    <div>
+      <p class="text-white font-semibold">Welcome back, <%= profile.name %>!</p>
+      <p class="text-sv-text-muted text-xs">Your personalized dashboard</p>
+    </div>
+  </div>
+
+  <% recommendations = profile.recommendations.includes(:content).top(8) %>
+  <% if recommendations.any? %>
+    <div>
+      <h3 class="text-lg font-bold text-white mb-3">Your Recommendations</h3>
+      <div class="grid grid-cols-4 gap-3">
+        <% recommendations.first(4).each do |rec| %>
+          <%= link_to player_path(rec.content), class: "sv-poster-card block" do %>
+            <div class="aspect-[2/3] bg-sv-card rounded-xl overflow-hidden relative">
+              <img src="<%= rec.content.poster_url %>" alt="<%= rec.content.title %>"
+                   class="w-full h-full object-cover"
+                   onerror="this.src='https://via.placeholder.com/176x264/12121a/6366f1?text=<%= CGI.escape(rec.content.title[0..6]) %>'">
+              <div class="sv-poster-overlay">
+                <p class="text-white font-semibold text-xs line-clamp-2"><%= rec.content.title %></p>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

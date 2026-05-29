@@ -1,0 +1,41 @@
+<div class="flex-shrink-0 w-full">
+  <%= link_to player_path(content), class: "sv-poster-card block" do %>
+    <div class="aspect-[2/3] bg-sv-card rounded-xl overflow-hidden relative">
+      <img src="<%= content.poster_url %>" alt="<%= content.title %>"
+           class="w-full h-full object-cover"
+           loading="lazy"
+           onerror="this.src='https://via.placeholder.com/200x300/12121a/6366f1?text=<%= CGI.escape(content.title[0..8]) %>'">
+      <!-- Rating badge -->
+      <% if content.rating %>
+        <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-black/70 rounded text-xs text-sv-warning font-medium">
+          &#9733; <%= content.rating %>
+        </div>
+      <% end %>
+      <!-- Type badge -->
+      <div class="absolute top-2 left-2">
+        <span class="sv-badge-primary text-xs"><%= content.content_type.capitalize %></span>
+      </div>
+      <!-- Hover overlay -->
+      <div class="sv-poster-overlay">
+        <p class="text-white font-semibold text-sm line-clamp-2"><%= content.title %></p>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="text-sv-text-muted text-xs"><%= content.year %></span>
+          <span class="text-sv-text-muted text-xs">&middot;</span>
+          <span class="text-sv-text-muted text-xs"><%= content.genre %></span>
+        </div>
+        <div class="flex items-center gap-2 mt-2">
+          <span class="px-2 py-0.5 bg-sv-primary rounded text-white text-xs font-medium">
+            &#9654; Play
+          </span>
+          <%= link_to content_path(content), class: "px-2 py-0.5 bg-white/20 rounded text-white text-xs", data: { turbo: false } do %>
+            Info
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="mt-2 px-0.5">
+    <p class="text-sv-text text-sm font-medium line-clamp-1"><%= content.title %></p>
+    <p class="text-sv-text-muted text-xs"><%= content.genre %> &middot; <%= content.formatted_duration %></p>
+  </div>
+</div>

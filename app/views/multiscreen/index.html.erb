@@ -1,0 +1,100 @@
+<% content_for :title, "Multi-Screen" %>
+
+<div class="p-4 h-full flex flex-col" data-controller="multiscreen">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-4 flex-shrink-0">
+    <div>
+      <h1 class="text-xl font-bold text-white">Multi-Screen View</h1>
+      <p class="text-sv-text-muted text-xs">Watching up to <%= @max_streams %> streams simultaneously</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="sv-badge-live text-xs">&#9679; LIVE</span>
+      <%= link_to streams_path, class: "sv-btn-ghost text-sm" do %>
+        Channel Guide
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Stream Grid -->
+  <% active_count = @active_streams.count %>
+  <div class="flex-1 grid gap-2 min-h-0 multiscreen-grid-<%= [active_count, 1].max %>" id="multiscreen-grid">
+    <% @active_streams.each_with_index do |stream, i| %>
+      <div class="relative bg-black rounded-xl overflow-hidden group min-h-0"
+           data-controller="hls-player"
+           data-hls-player-url-value="<%= stream.hls_url %>">
+        <video data-hls-player-target="video"
+               class="w-full h-full object-contain"
+               playsinline
+               muted="<%= i > 0 %>">
+        </video>
+
+        <!-- Loading -->
+        <div data-hls-player-target="loading"
+             class="absolute inset-0 flex items-center justify-center bg-black/60">
+          <div class="w-8 h-8 border-3 border-sv-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <!-- Channel label -->
+        <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+          <div class="flex items-center gap-1.5 bg-black/80 rounded-lg px-2 py-1">
+            <% if stream.is_live %>
+              <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+            <% end %>
+            <span class="text-white text-xs font-medium"><%= stream.name %></span>
+            <% if stream.channel_number %>
+              <span class="text-sv-text-muted text-xs">CH<%= stream.channel_number %></span>
+            <% end %>
+          </div>
+          <!-- Mute toggle for individual streams -->
+          <button data-action="click->hls-player#toggleMute"
+                  class="bg-black/80 rounded-lg p-1 text-sv-text-muted hover:text-sv-text transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m-3.536-9.536a5 5 0 000 7.072"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Full screen for this stream -->
+        <button data-action="click->hls-player#toggleFullscreen"
+                class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 bg-black/70 p-1.5 rounded-lg text-sv-text-muted hover:text-sv-text transition-all">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+          </svg>
+        </button>
+      </div>
+    <% end %>
+
+    <!-- Empty slots -->
+    <% (@max_streams - active_count).times do %>
+      <div class="relative bg-sv-card rounded-xl overflow-hidden border-2 border-dashed border-sv-border flex items-center justify-center group hover:border-sv-primary/40 transition-colors cursor-pointer min-h-0"
+           data-action="click->multiscreen#openChannelPicker">
+        <div class="text-center p-4">
+          <div class="w-12 h-12 rounded-full bg-sv-primary/10 flex items-center justify-center mx-auto mb-2">
+            <svg class="w-6 h-6 text-sv-primary-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+          </div>
+          <p class="text-sv-text-muted text-xs">Add Channel</p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Channel Picker Bar -->
+  <div class="mt-3 flex-shrink-0">
+    <div class="sv-card p-3">
+      <p class="text-sv-text-muted text-xs mb-2 font-medium">Switch Channel:</p>
+      <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <% @available_streams.each do |stream| %>
+          <%= link_to multiscreen_path(stream_ids: ([@active_streams.map(&:id), stream.id].flatten.uniq.first(@max_streams))),
+              class: "flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all #{ @active_streams.include?(stream) ? 'bg-sv-primary/20 text-sv-primary-light border border-sv-primary/30' : 'bg-sv-card text-sv-text-muted hover:bg-sv-card-hover border border-sv-border' }" do %>
+            <% if stream.is_live %>
+              <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+            <% end %>
+            <%= stream.name %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

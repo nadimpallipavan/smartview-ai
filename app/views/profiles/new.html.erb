@@ -1,0 +1,48 @@
+<% content_for :title, "New Profile" %>
+
+<div class="max-w-lg mx-auto p-6">
+  <div class="mb-6">
+    <%= link_to profiles_path, class: "text-sv-text-muted hover:text-sv-text text-sm flex items-center gap-1 transition-colors" do %>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Back to Profiles
+    <% end %>
+  </div>
+
+  <div class="sv-card p-8">
+    <h1 class="text-2xl font-bold text-white mb-6">Create New Profile</h1>
+
+    <%= form_with model: @profile, url: profiles_path, class: "space-y-5" do |f| %>
+      <% if @profile.errors.any? %>
+        <div class="px-4 py-3 bg-sv-accent/10 border border-sv-accent/30 rounded-xl text-sv-accent text-sm">
+          <% @profile.errors.full_messages.each do |msg| %>
+            <p><%= msg %></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :name, "Profile Name", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.text_field :name, class: "sv-input", placeholder: "e.g. Kids, Mom, Dad..." %>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <%= f.check_box :is_kids, class: "w-4 h-4 rounded border-sv-border bg-sv-card text-sv-primary focus:ring-sv-primary/30" %>
+        <%= f.label :is_kids, class: "text-sm text-sv-text" do %>
+          <span class="font-medium">Kids Profile</span>
+          <span class="text-sv-text-muted ml-1">— Restricts content to age-appropriate titles</span>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :avatar, "Profile Photo (optional)", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.file_field :avatar, class: "block w-full text-sm text-sv-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-sv-primary/10 file:text-sv-primary-light hover:file:bg-sv-primary/20 transition-all", accept: "image/*" %>
+        <p class="text-xs text-sv-text-muted mt-1">JPG, PNG or GIF. Max 5MB.</p>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2">
+        <%= f.submit "Create Profile", class: "sv-btn-primary cursor-pointer" %>
+        <%= link_to "Cancel", profiles_path, class: "sv-btn-ghost" %>
+      </div>
+    <% end %>
+  </div>
+</div>

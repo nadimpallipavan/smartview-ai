@@ -1,0 +1,68 @@
+<% content_for :title, "Account Settings" %>
+
+<div class="max-w-lg mx-auto p-6">
+  <h1 class="text-2xl font-bold text-white mb-6">Account Settings</h1>
+
+  <div class="sv-card p-8 mb-6">
+    <h2 class="text-lg font-semibold text-white mb-4">Profile Information</h2>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name),
+        html: { method: :put, class: "space-y-4" }) do |f| %>
+      <% if resource.errors.any? %>
+        <div class="px-4 py-3 bg-sv-accent/10 border border-sv-accent/30 rounded-xl text-sv-accent text-sm space-y-1">
+          <% resource.errors.full_messages.each do |msg| %>
+            <p><%= msg %></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :name, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.text_field :name, class: "sv-input", autocomplete: "name" %>
+      </div>
+
+      <div>
+        <%= f.label :email, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.email_field :email, class: "sv-input", autocomplete: "email" %>
+      </div>
+
+      <div class="pt-2 border-t border-sv-border">
+        <h3 class="text-sm font-medium text-sv-text mb-3">Change Password</h3>
+        <div class="space-y-3">
+          <div>
+            <%= f.label :password, "New Password (leave blank to keep current)", class: "block text-xs text-sv-text-muted mb-1" %>
+            <%= f.password_field :password, class: "sv-input", autocomplete: "new-password" %>
+          </div>
+          <div>
+            <%= f.label :password_confirmation, "Confirm New Password", class: "block text-xs text-sv-text-muted mb-1" %>
+            <%= f.password_field :password_confirmation, class: "sv-input", autocomplete: "new-password" %>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :current_password, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.password_field :current_password, class: "sv-input", autocomplete: "current-password" %>
+        <p class="text-xs text-sv-text-muted mt-1">Required to confirm any changes</p>
+      </div>
+
+      <%= f.submit "Save Changes", class: "sv-btn-primary cursor-pointer" %>
+    <% end %>
+  </div>
+
+  <!-- Subscription info -->
+  <div class="sv-card p-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm font-medium text-sv-text">Subscription Tier</p>
+        <p class="text-sv-text-muted text-xs mt-0.5 capitalize"><%= current_user.subscription_tier %> &middot; Up to <%= current_user.max_streams %> simultaneous streams</p>
+      </div>
+      <span class="sv-badge-primary capitalize"><%= current_user.subscription_tier %></span>
+    </div>
+  </div>
+
+  <div class="mt-4 text-center">
+    <%= link_to dashboard_path, class: "text-sv-text-muted hover:text-sv-text text-sm transition-colors" do %>
+      &larr; Back to Dashboard
+    <% end %>
+  </div>
+</div>

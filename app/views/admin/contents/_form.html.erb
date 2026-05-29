@@ -1,0 +1,119 @@
+<% if content.errors.any? %>
+  <div class="px-4 py-3 bg-sv-accent/10 border border-sv-accent/30 rounded-xl text-sv-accent text-sm space-y-1 mb-6">
+    <% content.errors.full_messages.each do |msg| %>
+      <p><%= msg %></p>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <!-- Left Column -->
+  <div class="space-y-5">
+    <div>
+      <%= f.label :title, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.text_field :title, class: "sv-input", placeholder: "Content title" %>
+    </div>
+
+    <div>
+      <%= f.label :description, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.text_area :description, rows: 4, class: "sv-input resize-none", placeholder: "Brief description..." %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :genre, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.select :genre, Content::GENRES, { include_blank: "Select genre" },
+            class: "sv-input" %>
+      </div>
+      <div>
+        <%= f.label :content_type, "Type", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.select :content_type,
+            [["Movie", "movie"], ["Series", "series"], ["Documentary", "documentary"], ["Live", "live"]],
+            { include_blank: "Select type" },
+            class: "sv-input" %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :year, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.number_field :year, class: "sv-input", min: 1900, max: 2099, placeholder: "2024" %>
+      </div>
+      <div>
+        <%= f.label :duration, "Duration (minutes)", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.number_field :duration, class: "sv-input", min: 1, placeholder: "120" %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :rating, "Rating (0-10)", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.number_field :rating, class: "sv-input", min: 0, max: 10, step: 0.1, placeholder: "7.5" %>
+      </div>
+      <div>
+        <%= f.label :maturity_rating, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+        <%= f.select :maturity_rating,
+            [["G", "G"], ["PG", "PG"], ["PG-13", "PG-13"], ["R", "R"], ["NC-17", "NC-17"]],
+            { include_blank: "Select rating" },
+            class: "sv-input" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :language, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.text_field :language, class: "sv-input", placeholder: "English" %>
+    </div>
+
+    <div>
+      <%= f.label :director, class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.text_field :director, class: "sv-input", placeholder: "Director name" %>
+    </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="space-y-5">
+    <div>
+      <%= f.label :hls_url, "HLS Stream URL (.m3u8)", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.url_field :hls_url, class: "sv-input", placeholder: "https://example.com/stream.m3u8" %>
+      <p class="text-xs text-sv-text-muted mt-1">Leave blank to use a default test stream</p>
+    </div>
+
+    <div>
+      <%= f.label :trailer_url, "Trailer URL", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.url_field :trailer_url, class: "sv-input", placeholder: "https://youtube.com/watch?v=..." %>
+    </div>
+
+    <div>
+      <%= f.label :poster, "Poster Image", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.file_field :poster, class: "block w-full text-sm text-sv-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-sv-primary/10 file:text-sv-primary-light hover:file:bg-sv-primary/20", accept: "image/*" %>
+    </div>
+
+    <div>
+      <%= f.label :backdrop, "Backdrop Image", class: "block text-sm font-medium text-sv-text mb-1.5" %>
+      <%= f.file_field :backdrop, class: "block w-full text-sm text-sv-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-sv-primary/10 file:text-sv-primary-light hover:file:bg-sv-primary/20", accept: "image/*" %>
+    </div>
+
+    <!-- Flags -->
+    <div class="space-y-3 pt-2">
+      <div class="flex items-center gap-3">
+        <%= f.check_box :published, class: "w-4 h-4 rounded border-sv-border bg-sv-card text-sv-primary" %>
+        <%= f.label :published, class: "text-sm text-sv-text" do %>
+          <span class="font-medium">Published</span>
+          <span class="text-sv-text-muted ml-1">— Visible to users</span>
+        <% end %>
+      </div>
+      <div class="flex items-center gap-3">
+        <%= f.check_box :featured, class: "w-4 h-4 rounded border-sv-border bg-sv-card text-sv-primary" %>
+        <%= f.label :featured, class: "text-sm text-sv-text" do %>
+          <span class="font-medium">Featured</span>
+          <span class="text-sv-text-muted ml-1">— Shown in hero banner</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flex items-center gap-3 mt-6 pt-6 border-t border-sv-border">
+  <%= f.submit class: "sv-btn-primary cursor-pointer" %>
+  <%= link_to "Cancel", admin_contents_path, class: "sv-btn-ghost" %>
+</div>

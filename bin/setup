@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require_relative "../config/application"
+Rails.application.load_tasks
+
+puts "== Setting up SmartView AI =="
+
+system("bundle install") || abort("Bundle install failed!")
+system("bundle exec rails db:prepare") || abort("Database setup failed!")
+system("bundle exec rails db:seed") || abort("Seed failed!")
+system("bundle exec rails assets:precompile") || abort("Asset precompile failed!")
+
+puts "== Setup Complete! =="
+puts "Run 'docker-compose up' or 'bundle exec rails s' to start the app."

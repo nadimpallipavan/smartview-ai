@@ -1,0 +1,101 @@
+<% content_for :title, "Profiles" %>
+
+<div class="min-h-screen flex flex-col items-center justify-center p-6">
+  <div class="text-center mb-10">
+    <h1 class="text-4xl font-bold text-white mb-2">Who's Watching?</h1>
+    <p class="text-sv-text-muted">Select a profile to continue</p>
+  </div>
+
+  <!-- Profile Grid -->
+  <div class="flex flex-wrap gap-6 justify-center max-w-3xl">
+    <% @profiles.each do |profile| %>
+      <div class="flex flex-col items-center group">
+        <!-- Profile Avatar / Switch Button -->
+        <%= button_to switch_profile_path(profile), method: :post,
+            class: "flex flex-col items-center gap-3 p-2 rounded-2xl hover:bg-sv-card transition-all duration-300 group cursor-pointer border border-transparent hover:border-sv-primary/30",
+            data: { turbo_stream: true } do %>
+          <div class="w-24 h-24 rounded-2xl bg-gradient-to-br <%= profile.avatar_gradient %> flex items-center justify-center shadow-glow-sm group-hover:shadow-glow-md transition-shadow relative overflow-hidden">
+            <% if profile.avatar.attached? %>
+              <%= image_tag profile.avatar, class: "w-full h-full object-cover" %>
+            <% else %>
+              <span class="text-3xl font-black text-white"><%= profile.initials %></span>
+            <% end %>
+            <% if profile.is_default %>
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-sv-primary"></div>
+            <% end %>
+            <% if profile.is_kids %>
+              <div class="absolute top-1 right-1 w-5 h-5 bg-sv-warning rounded-full flex items-center justify-center">
+                <span class="text-xs">K</span>
+              </div>
+            <% end %>
+          </div>
+          <span class="text-sv-text text-sm font-medium group-hover:text-white transition-colors"><%= profile.name %></span>
+          <% if profile.has_face_enrolled? %>
+            <span class="text-xs text-sv-success flex items-center gap-1">
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              Face enrolled
+            </span>
+          <% end %>
+        <% end %>
+
+        <!-- Profile Actions -->
+        <div class="flex gap-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <%= link_to edit_profile_path(profile), class: "p-1.5 rounded-lg bg-sv-card hover:bg-sv-card-hover text-sv-text-muted hover:text-sv-text transition-all", title: "Edit" do %>
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          <% end %>
+          <%= link_to enroll_face_profile_path(profile), class: "p-1.5 rounded-lg bg-sv-card hover:bg-sv-card-hover text-sv-text-muted hover:text-sv-text transition-all", title: "Enroll Face" do %>
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Add Profile -->
+    <% if @profiles.count < 5 %>
+      <div class="flex flex-col items-center gap-3">
+        <%= link_to new_profile_path, class: "w-24 h-24 rounded-2xl border-2 border-dashed border-sv-border hover:border-sv-primary/50 flex items-center justify-center transition-all duration-300 hover:bg-sv-primary/5 group" do %>
+          <svg class="w-8 h-8 text-sv-text-muted group-hover:text-sv-primary-light transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+        <% end %>
+        <span class="text-sv-text-muted text-sm">Add Profile</span>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Face Recognition Section -->
+  <div class="mt-12 text-center">
+    <p class="text-sv-text-muted text-sm mb-4">Or use face recognition to auto-select your profile</p>
+    <div data-controller="webcam" data-webcam-mode-value="recognize" data-webcam-auto-capture-value="false"
+         class="inline-block">
+      <div class="sv-card p-4 w-80">
+        <div class="relative rounded-xl overflow-hidden bg-black mb-3" style="aspect-ratio: 4/3;">
+          <video data-webcam-target="video" autoplay playsinline muted
+                 class="w-full h-full object-cover"></video>
+          <canvas data-webcam-target="canvas" class="hidden"></canvas>
+          <!-- Face outline guide -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="w-40 h-48 border-2 border-sv-primary/50 rounded-full opacity-50"></div>
+          </div>
+        </div>
+        <p data-webcam-target="status" class="text-sv-secondary text-xs text-center mb-3">Starting camera...</p>
+        <button data-action="click->webcam#capture"
+                class="sv-btn-primary w-full text-sm flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Recognize My Face
+        </button>
+      </div>
+    </div>
+    <div id="face-recognition-status" class="mt-3 text-sm"></div>
+  </div>
+
+  <!-- Manage link -->
+  <div class="mt-8">
+    <%= link_to dashboard_path, class: "text-sv-text-muted hover:text-sv-text text-sm transition-colors" do %>
+      &larr; Back to Dashboard
+    <% end %>
+  </div>
+</div>

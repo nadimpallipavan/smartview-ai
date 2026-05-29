@@ -1,0 +1,136 @@
+<% content_for :title, @content.title %>
+
+<div class="flex flex-col h-full bg-black"
+     data-controller="hls-player"
+     data-hls-player-url-value="<%= @content.hls_url.present? ? @content.hls_url : '' %>"
+     data-hls-player-content-id-value="<%= @content.id %>"
+     data-hls-player-start-position-value="<%= @viewing_history&.progress || 0 %>">
+
+  <!-- Video Player -->
+  <div class="relative group flex-shrink-0 bg-black" style="aspect-ratio: 16/9; max-height: 70vh;">
+    <video data-hls-player-target="video"
+           class="w-full h-full"
+           playsinline
+           preload="metadata">
+    </video>
+
+    <!-- Loading Overlay -->
+    <div data-hls-player-target="loading"
+         class="absolute inset-0 flex items-center justify-center bg-black/50">
+      <div class="w-14 h-14 border-4 border-sv-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <!-- Play/Pause Overlay -->
+    <div data-hls-player-target="overlay"
+         class="absolute inset-0 flex items-center justify-center cursor-pointer"
+         data-action="click->hls-player#togglePlay">
+      <button data-hls-player-target="playButton"
+              class="w-20 h-20 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80 transition-colors">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="sv-player-controls">
+      <!-- Progress Bar -->
+      <div class="sv-progress-bar mb-3 cursor-pointer"
+           data-hls-player-target="progress"
+           data-action="click->hls-player#seek">
+      </div>
+
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <!-- Play/Pause -->
+          <button data-action="click->hls-player#togglePlay" class="text-white hover:text-sv-primary-light transition-colors">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+
+          <!-- Volume -->
+          <div class="flex items-center gap-2">
+            <button data-action="click->hls-player#toggleMute" class="text-white hover:text-sv-primary-light transition-colors">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m-3.536-9.536a5 5 0 000 7.072"/>
+              </svg>
+            </button>
+            <input type="range" min="0" max="100" value="100"
+                   data-hls-player-target="volume"
+                   data-action="input->hls-player#changeVolume"
+                   class="w-20 h-1 rounded-full bg-sv-border appearance-none cursor-pointer">
+          </div>
+
+          <!-- Time display -->
+          <span data-hls-player-target="time" class="text-white text-sm font-mono">0:00 / 0:00</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Title -->
+          <span class="text-sv-text-muted text-sm hidden md:block truncate max-w-48"><%= @content.title %></span>
+          <!-- Fullscreen -->
+          <button data-action="click->hls-player#toggleFullscreen"
+                  data-hls-player-target="fullscreen"
+                  class="text-white hover:text-sv-primary-light transition-colors">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Info Panel -->
+  <div class="flex-1 overflow-y-auto bg-sv-dark p-6">
+    <div class="max-w-4xl mx-auto">
+      <div class="flex flex-col lg:flex-row gap-6">
+        <!-- Main Info -->
+        <div class="flex-1">
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="sv-badge-primary"><%= @content.genre %></span>
+            <% if @content.rating %>
+              <span class="flex items-center gap-1 text-sv-warning text-sm">&#9733; <%= @content.rating %></span>
+            <% end %>
+            <span class="text-sv-text-muted text-sm"><%= @content.year %></span>
+            <span class="text-sv-text-muted text-sm"><%= @content.formatted_duration %></span>
+          </div>
+
+          <h1 class="text-2xl font-bold text-white mb-3"><%= @content.title %></h1>
+          <p class="text-sv-text-muted leading-relaxed mb-4"><%= @content.description %></p>
+
+          <% if @content.director.present? %>
+            <p class="text-sm text-sv-text-muted mb-1">
+              <span class="text-sv-text font-medium">Director:</span> <%= @content.director %>
+            </p>
+          <% end %>
+          <% if @content.cast.present? && @content.cast.any? %>
+            <p class="text-sm text-sv-text-muted">
+              <span class="text-sv-text font-medium">Cast:</span> <%= @content.cast.first(5).join(", ") %>
+            </p>
+          <% end %>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex-shrink-0 space-y-3 lg:w-48">
+          <%= link_to content_path(@content), class: "sv-btn-secondary w-full text-sm flex items-center justify-center gap-2" do %>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Full Details
+          <% end %>
+          <%= link_to contents_path, class: "sv-btn-ghost w-full text-sm flex items-center justify-center gap-2" do %>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            Browse More
+          <% end %>
+
+          <% if @viewing_history %>
+            <div class="sv-card p-3 text-center">
+              <p class="text-xs text-sv-text-muted mb-1">Last watched</p>
+              <p class="text-sv-text text-sm font-medium"><%= time_ago_short(@viewing_history.watched_at) %></p>
+              <div class="mt-2 h-1 bg-sv-border rounded-full">
+                <div class="h-full bg-sv-primary rounded-full" style="width: <%= @viewing_history.percentage_watched %>%"></div>
+              </div>
+              <p class="text-xs text-sv-text-muted mt-1"><%= @viewing_history.percentage_watched %>% watched</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

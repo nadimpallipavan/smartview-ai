@@ -1,0 +1,60 @@
+<% content_for :title, "Search" %>
+
+<div class="p-6" data-controller="search">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-white mb-4">Search</h1>
+
+    <%= form_with url: search_contents_path, method: :get, class: "flex gap-3", data: { turbo: false } do |f| %>
+      <div class="relative flex-1 max-w-2xl">
+        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-sv-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <%= f.text_field :q, value: params[:q], autofocus: true,
+            class: "sv-input pl-12 text-lg", placeholder: "Search movies, shows, genres..." %>
+      </div>
+      <%= f.submit "Search", class: "sv-btn-primary cursor-pointer" %>
+    <% end %>
+  </div>
+
+  <!-- Search Results -->
+  <% if params[:q].present? %>
+    <div class="mb-4">
+      <p class="text-sv-text-muted text-sm">
+        <% if @contents.any? %>
+          Found <strong class="text-sv-text"><%= @pagy.count %></strong> result<%= @pagy.count == 1 ? "" : "s" %> for
+        <% else %>
+          No results for
+        <% end %>
+        "<strong class="text-sv-text"><%= h params[:q] %></strong>"
+      </p>
+    </div>
+
+    <%= render "contents/search_results", contents: @contents %>
+
+    <!-- Pagination -->
+    <% if @pagy && @pagy.pages > 1 %>
+      <div class="flex items-center justify-center gap-2 mt-8">
+        <% if @pagy.prev %>
+          <%= link_to "&larr; Previous".html_safe, search_contents_path(q: params[:q], page: @pagy.prev), class: "sv-btn-secondary text-sm" %>
+        <% end %>
+        <span class="text-sv-text-muted text-sm">Page <%= @pagy.page %> of <%= @pagy.pages %></span>
+        <% if @pagy.next %>
+          <%= link_to "Next &rarr;".html_safe, search_contents_path(q: params[:q], page: @pagy.next), class: "sv-btn-secondary text-sm" %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <!-- Suggestions when no query -->
+    <div class="mt-8">
+      <h2 class="text-lg font-semibold text-sv-text-muted mb-4">Browse by Genre</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <% Content::GENRES.each do |genre| %>
+          <%= link_to genre_contents_path(name: genre), class: "sv-card p-4 flex flex-col items-center text-center group" do %>
+            <span class="text-3xl mb-2"><%= genre_icon(genre) %></span>
+            <span class="text-sm text-sv-text group-hover:text-white transition-colors"><%= genre %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

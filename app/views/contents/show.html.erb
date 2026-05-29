@@ -1,0 +1,113 @@
+<% content_for :title, @content.title %>
+
+<!-- Backdrop Hero -->
+<div class="relative h-72 lg:h-96 overflow-hidden">
+  <img src="<%= @content.backdrop_url %>" alt="<%= @content.title %>"
+       class="w-full h-full object-cover"
+       onerror="this.src='https://via.placeholder.com/1280x720/0a0a0f/6366f1?text=<%= CGI.escape(@content.title) %>'">
+  <div class="absolute inset-0 bg-gradient-to-t from-sv-dark via-sv-dark/60 to-transparent"></div>
+  <div class="absolute inset-0 bg-gradient-to-r from-sv-dark/80 to-transparent"></div>
+</div>
+
+<div class="px-6 -mt-24 relative z-10 pb-8">
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Poster -->
+    <div class="flex-shrink-0 w-40 lg:w-52 self-start">
+      <div class="rounded-2xl overflow-hidden shadow-2xl border border-sv-border/50">
+        <img src="<%= @content.poster_url %>" alt="<%= @content.title %>"
+             class="w-full aspect-[2/3] object-cover"
+             onerror="this.src='https://via.placeholder.com/208x312/12121a/6366f1?text=<%= CGI.escape(@content.title[0..8]) %>'">
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="flex-1 pt-24 lg:pt-8">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class="sv-badge-primary"><%= @content.genre %></span>
+        <span class="sv-badge bg-sv-card text-sv-text-muted"><%= @content.content_type.capitalize %></span>
+        <% if @content.maturity_rating.present? %>
+          <span class="sv-badge bg-sv-warning/20 text-sv-warning"><%= @content.maturity_rating %></span>
+        <% end %>
+      </div>
+
+      <h1 class="text-3xl lg:text-4xl font-black text-white mb-2"><%= @content.title %></h1>
+
+      <div class="flex flex-wrap items-center gap-4 text-sm text-sv-text-muted mb-4">
+        <% if @content.year %><span><%= @content.year %></span><% end %>
+        <% if @content.duration %><span><%= @content.formatted_duration %></span><% end %>
+        <% if @content.rating %>
+          <span class="flex items-center gap-1 text-sv-warning font-medium">
+            &#9733; <%= @content.rating %>/10
+          </span>
+        <% end %>
+        <% if @content.language.present? %>
+          <span><%= @content.language %></span>
+        <% end %>
+      </div>
+
+      <p class="text-sv-text-muted mb-6 max-w-2xl leading-relaxed"><%= @content.description %></p>
+
+      <% if @content.director.present? %>
+        <p class="text-sv-text-muted text-sm mb-2">
+          <span class="text-sv-text font-medium">Director:</span> <%= @content.director %>
+        </p>
+      <% end %>
+      <% if @content.cast.present? && @content.cast.any? %>
+        <p class="text-sv-text-muted text-sm mb-6">
+          <span class="text-sv-text font-medium">Cast:</span> <%= @content.cast.first(5).join(", ") %>
+        </p>
+      <% end %>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-3">
+        <%= link_to player_path(@content), class: "sv-btn-primary flex items-center gap-2" do %>
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Play Now
+        <% end %>
+
+        <% if @content.trailer_url.present? %>
+          <a href="<%= @content.trailer_url %>" target="_blank" rel="noopener"
+             class="sv-btn-secondary flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Trailer
+          </a>
+        <% end %>
+      </div>
+
+      <!-- Tags -->
+      <% if @content.tags.present? && @content.tags.any? %>
+        <div class="flex flex-wrap gap-2 mt-6">
+          <% @content.tags.each do |tag| %>
+            <span class="px-2 py-1 bg-sv-card rounded-lg text-sv-text-muted text-xs border border-sv-border">#<%= tag %></span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Related Content -->
+  <% if @related.any? %>
+    <div class="mt-10">
+      <h2 class="text-xl font-bold text-white mb-4">More Like This</h2>
+      <div class="sv-content-row">
+        <div class="sv-row-track">
+          <% @related.each do |content| %>
+            <div class="flex-shrink-0 w-36 lg:w-44">
+              <%= link_to player_path(content), class: "sv-poster-card block" do %>
+                <div class="aspect-[2/3] bg-sv-card rounded-xl overflow-hidden relative">
+                  <img src="<%= content.poster_url %>" alt="<%= content.title %>"
+                       class="w-full h-full object-cover"
+                       onerror="this.src='https://via.placeholder.com/176x264/12121a/6366f1?text=<%= CGI.escape(content.title[0..8]) %>'">
+                  <div class="sv-poster-overlay">
+                    <p class="text-white font-semibold text-sm line-clamp-2"><%= content.title %></p>
+                    <p class="text-sv-text-muted text-xs mt-1"><%= content.year %></p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

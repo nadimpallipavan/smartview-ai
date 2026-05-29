@@ -1,0 +1,50 @@
+<% content_for :title, @stream.name %>
+
+<div class="flex items-center gap-3 mb-6">
+  <%= link_to admin_streams_path, class: "text-sv-text-muted hover:text-sv-text transition-colors" do %>
+    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+  <% end %>
+  <h1 class="text-2xl font-bold text-white"><%= @stream.name %></h1>
+  <div class="ml-auto flex items-center gap-2">
+    <%= link_to edit_admin_stream_path(@stream), class: "sv-btn-secondary text-sm" do %>Edit<% end %>
+    <%= button_to admin_stream_path(@stream), method: :delete,
+        class: "sv-btn-ghost text-sv-accent text-sm",
+        data: { turbo_confirm: "Delete #{@stream.name}?" },
+        form: { data: { turbo_confirm: "Delete #{@stream.name}?" } } do %>
+      Delete
+    <% end %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="sv-card p-5">
+    <h2 class="text-sm font-semibold text-sv-text-muted uppercase tracking-wider mb-4">Channel Info</h2>
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Category</dt><dd class="text-sv-text"><%= @stream.category %></dd></div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Channel #</dt><dd class="text-sv-text"><%= @stream.channel_number || "—" %></dd></div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Live Status</dt>
+        <dd><%= @stream.is_live? ? '<span class="sv-badge-live text-xs">LIVE</span>'.html_safe : '<span class="text-sv-text-muted">Offline</span>'.html_safe %></dd>
+      </div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Active</dt><dd class="text-sv-text"><%= @stream.is_active? ? "Yes" : "No" %></dd></div>
+      <div class="flex justify-between"><dt class="text-sv-text-muted">Viewers</dt><dd class="text-sv-text"><%= @stream.viewer_count || 0 %></dd></div>
+    </dl>
+  </div>
+
+  <div class="sv-card p-5">
+    <h2 class="text-sm font-semibold text-sv-text-muted uppercase tracking-wider mb-4">Stream URL</h2>
+    <p class="text-sv-text text-xs font-mono break-all bg-sv-dark p-3 rounded-lg"><%= @stream.hls_url %></p>
+    <div class="mt-4">
+      <%= link_to stream_path(@stream), class: "sv-btn-primary text-sm flex items-center gap-2", target: "_blank" do %>
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        Preview Stream
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @stream.description.present? %>
+  <div class="sv-card p-5 mt-4">
+    <h2 class="text-sm font-semibold text-sv-text-muted uppercase tracking-wider mb-2">Description</h2>
+    <p class="text-sv-text text-sm"><%= @stream.description %></p>
+  </div>
+<% end %>
