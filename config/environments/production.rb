@@ -18,6 +18,9 @@ Rails.application.configure do
     end
 
   config.force_ssl = true
+  # Don't redirect the health check to HTTPS — Render probes it internally over
+  # HTTP, and a 301 redirect would make the deploy look unhealthy.
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/health" } } }
 
   # Allow the Render-assigned hostname (and any custom domain) through
   # Rails host authorization. RENDER_EXTERNAL_HOSTNAME is set by Render.
