@@ -28,6 +28,10 @@ RUN bundle config set --local deployment 'false' && \
 # Copy application
 COPY . .
 
+# Ensure runtime directories exist (these are gitignored, so not in the repo).
+# Puma needs tmp/pids for its pidfile; the rest are used at runtime.
+RUN mkdir -p tmp/pids tmp/cache log storage
+
 # Precompile bootsnap
 RUN bundle exec bootsnap precompile --gemfile app/ lib/
 
